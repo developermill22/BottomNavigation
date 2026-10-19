@@ -20,3 +20,35 @@ index 6115e87..957527c 100644
  
    RuntimeScheduler(const RuntimeScheduler &) = delete;
  
+diff --git a/node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI/Runtime/JavaScriptRuntime.swift b/node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI/Runtime/JavaScriptRuntime.swift
+index 3d796ee..5b63ac4 100644
+--- a/node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI/Runtime/JavaScriptRuntime.swift
++++ b/node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI/Runtime/JavaScriptRuntime.swift
+@@ -188,6 +188,7 @@ open class JavaScriptRuntime: Equatable, Identifiable, @unchecked Sendable {
+       nonisolated(unsafe) let resultPtr = resultPtr
+ 
+       return withGuaranteedContext(context) { (context: HostObjectContext, runtime) in
++        nonisolated(unsafe) let resultPtr = resultPtr
+         return JavaScriptActor.assumeIsolated {
+           return forwardingSwiftErrorsToJS(runtime: runtime) {
+             try context.get(propertyName).writeJSIValue(to: resultPtr)
+@@ -781,6 +782,9 @@ private func createFunctionClosure(
+     // See `withGuaranteedContext` for why neither the context nor the runtime is retained here, and
+     // why the result is written to the caller's slot instead of being returned.
+     return withGuaranteedContext(context) { (context: HostFunctionContext, runtime) in
++      nonisolated(unsafe) let thisPtr = thisPtr
++      nonisolated(unsafe) let argumentsPtr = argumentsPtr
++      nonisolated(unsafe) let resultPtr = resultPtr
+       return JavaScriptActor.assumeIsolated {
+         return forwardingSwiftErrorsToJS(runtime: runtime) {
+           let this = UnsafeMutablePointer(mutating: thisPtr).move()
+@@ -824,6 +828,9 @@ private func createFunctionClosure(
+     // See `withGuaranteedContext` for why neither the context nor the runtime is retained here, and
+     // why the result is written to the caller's slot instead of being returned.
+     return withGuaranteedContext(context) { (context: UnownedThisHostFunctionContext, runtime) in
++      nonisolated(unsafe) let thisPtr = thisPtr
++      nonisolated(unsafe) let argumentsPtr = argumentsPtr
++      nonisolated(unsafe) let resultPtr = resultPtr
+       return JavaScriptActor.assumeIsolated {
+         return forwardingSwiftErrorsToJS(runtime: runtime) {
+           let arguments = JavaScriptValuesBuffer(runtime, start: argumentsPtr, count: argumentsCount)
